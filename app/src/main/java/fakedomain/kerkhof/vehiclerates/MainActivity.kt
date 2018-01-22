@@ -3,7 +3,9 @@ package fakedomain.kerkhof.vehiclerates
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import com.google.gson.Gson
 import fakedomain.kerkhof.vehiclerates.helpers.Constants
+import fakedomain.kerkhof.vehiclerates.model.VehicleRatesResponse
 import okhttp3.*
 import java.io.IOException
 
@@ -30,8 +32,17 @@ class MainActivity : AppCompatActivity() {
                 .build()
 
         client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {}
-            override fun onResponse(call: Call, response: Response) = println(response.body()?.string())
+            override fun onResponse(call: Call, response: Response) {
+                val gson = Gson()
+                val jsonData = response.body()?.string()
+                val mappedResponse: VehicleRatesResponse = gson.fromJson(jsonData, VehicleRatesResponse::class.java)
+
+                println(mappedResponse)
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                // TODO: Handle failure
+            }
         })
     }
 
