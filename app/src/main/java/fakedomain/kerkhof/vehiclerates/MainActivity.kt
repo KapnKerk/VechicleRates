@@ -2,7 +2,9 @@ package fakedomain.kerkhof.vehiclerates
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
 import com.google.gson.Gson
 import fakedomain.kerkhof.vehiclerates.helpers.Constants
 import fakedomain.kerkhof.vehiclerates.model.VehicleRatesResponse
@@ -12,19 +14,22 @@ import java.io.IOException
 class MainActivity : AppCompatActivity() {
 
     private val client = OkHttpClient()
+    private val loadingIndicator: LinearLayout by lazy { findViewById<LinearLayout>(R.id.linLayProgress) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val postButton = findViewById<Button>(R.id.post_button)
-        val getButton = findViewById<Button>(R.id.get_button)
+        val postButton = findViewById<Button>(R.id.btnPost)
+        val getButton = findViewById<Button>(R.id.btnGet)
 
         postButton.setOnClickListener { getVehicleRates() }
         getButton.setOnClickListener {  createVehicleRate() }
     }
 
     private fun getVehicleRates() {
+        loadingIndicator.visibility = View.VISIBLE
+
         val authHeader = Credentials.basic(Constants.AUTH_USERNAME, Constants.AUTH_PASS)
         val request = Request.Builder()
                 .url(Constants.URL_VEHICLE_RATES)
@@ -33,6 +38,8 @@ class MainActivity : AppCompatActivity() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
+                runOnUiThread { loadingIndicator.visibility = View.GONE }
+
                 val gson = Gson()
                 val jsonData = response.body()?.string()
                 val mappedResponse: VehicleRatesResponse = gson.fromJson(jsonData, VehicleRatesResponse::class.java)
@@ -41,6 +48,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread { loadingIndicator.visibility = View.GONE }
                 // TODO: Handle failure
             }
         })
