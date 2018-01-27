@@ -15,3 +15,12 @@ data class VehicleRate(
         val rate: Double,
         val wait_time_rate: Double
 )
+
+data class CreateVehicleRate(
+        val data: CreateVehicleRateData
+)
+
+data class CreateVehicleRateData(
+        val rate: Double,
+        val wait_time_rate: Double
+)
