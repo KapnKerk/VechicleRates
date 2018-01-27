@@ -9,7 +9,8 @@ import com.google.gson.Gson
 import fakedomain.kerkhof.vehiclerates.helpers.Constants
 import fakedomain.kerkhof.vehiclerates.model.CreateVehicleRate
 import fakedomain.kerkhof.vehiclerates.model.CreateVehicleRateData
-import fakedomain.kerkhof.vehiclerates.model.VehicleRatesResponse
+import fakedomain.kerkhof.vehiclerates.model.CreateVehicleRateResponse
+import fakedomain.kerkhof.vehiclerates.model.GetVehicleRatesResponse
 import okhttp3.*
 import java.io.IOException
 
@@ -18,6 +19,8 @@ class MainActivity : AppCompatActivity() {
 
     private val client = OkHttpClient()
     private val loadingIndicator: LinearLayout by lazy { findViewById<LinearLayout>(R.id.linLayProgress) }
+    private val authHeader: String by lazy { Credentials.basic(Constants.AUTH_USERNAME, Constants.AUTH_PASS) }
+    private val gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +35,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun getVehicleRates() {
         loadingIndicator.visibility = View.VISIBLE
-
-        val authHeader = Credentials.basic(Constants.AUTH_USERNAME, Constants.AUTH_PASS)
         val request = Request.Builder()
                 .url(Constants.URL_VEHICLE_RATES)
                 .header(Constants.AUTH_NAME, authHeader)
@@ -43,9 +44,8 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread { loadingIndicator.visibility = View.GONE }
 
-                val gson = Gson()
                 val jsonData = response.body()?.string()
-                val mappedResponse: VehicleRatesResponse = gson.fromJson(jsonData, VehicleRatesResponse::class.java)
+                val mappedResponse: GetVehicleRatesResponse = gson.fromJson(jsonData, GetVehicleRatesResponse::class.java)
 
                 println(mappedResponse)
             }
@@ -60,11 +60,8 @@ class MainActivity : AppCompatActivity() {
     private fun createVehicleRate() {
         loadingIndicator.visibility = View.VISIBLE
 
-        val authHeader = Credentials.basic(Constants.AUTH_USERNAME, Constants.AUTH_PASS)
-
         val rateData = CreateVehicleRateData(2.1, 3.0)
         val rate = CreateVehicleRate(rateData)
-        val gson = Gson()
 
         val jsonRate = gson.toJson(rate)
 
@@ -82,8 +79,10 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread { loadingIndicator.visibility = View.GONE }
 
-                println(response.body()?.string())
+                val jsonData = response.body()?.string()
+                val mappedResponse: CreateVehicleRateResponse = gson.fromJson(jsonData, CreateVehicleRateResponse::class.java)
 
+                println(mappedResponse)
             }
 
             override fun onFailure(call: Call, e: IOException) {

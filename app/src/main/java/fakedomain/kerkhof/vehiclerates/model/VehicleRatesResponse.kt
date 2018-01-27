@@ -5,7 +5,7 @@ package fakedomain.kerkhof.vehiclerates.model
  */
 
 
-data class VehicleRatesResponse(
+data class GetVehicleRatesResponse(
         val count: Int,
         val data: List<VehicleRate>
 )
@@ -23,4 +23,8 @@ data class CreateVehicleRate(
 data class CreateVehicleRateData(
         val rate: Double,
         val wait_time_rate: Double
+)
+
+data class CreateVehicleRateResponse(
+        val data: VehicleRate
 )
