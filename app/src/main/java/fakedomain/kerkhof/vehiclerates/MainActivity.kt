@@ -2,15 +2,13 @@ package fakedomain.kerkhof.vehiclerates
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.Button
 import android.widget.LinearLayout
 import com.google.gson.Gson
 import fakedomain.kerkhof.vehiclerates.helpers.Constants
-import fakedomain.kerkhof.vehiclerates.model.CreateVehicleRate
-import fakedomain.kerkhof.vehiclerates.model.CreateVehicleRateData
-import fakedomain.kerkhof.vehiclerates.model.CreateVehicleRateResponse
-import fakedomain.kerkhof.vehiclerates.model.GetVehicleRatesResponse
+import fakedomain.kerkhof.vehiclerates.model.*
+import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import java.io.IOException
 
@@ -22,15 +20,28 @@ class MainActivity : AppCompatActivity() {
     private val authHeader: String by lazy { Credentials.basic(Constants.AUTH_USERNAME, Constants.AUTH_PASS) }
     private val gson = Gson()
 
+    private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var adapter: RecyclerAdapter
+
+    private var vehicleRates: ArrayList<VehicleRate> = ArrayList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val postButton = findViewById<Button>(R.id.btnPost)
-        val getButton = findViewById<Button>(R.id.btnGet)
+        linearLayoutManager = LinearLayoutManager(this)
+        vehicleRateRV.layoutManager = linearLayoutManager
+    }
 
-        postButton.setOnClickListener { createVehicleRate() }
-        getButton.setOnClickListener {  getVehicleRates() }
+    override fun onStart() {
+        super.onStart()
+        getVehicleRates()
+    }
+
+    private fun refreshRecyclerView() {
+        adapter = RecyclerAdapter(vehicleRates)
+        vehicleRateRV.adapter = adapter
+        adapter.notifyDataSetChanged()
     }
 
     private fun getVehicleRates() {
@@ -47,7 +58,9 @@ class MainActivity : AppCompatActivity() {
                 val jsonData = response.body()?.string()
                 val mappedResponse: GetVehicleRatesResponse = gson.fromJson(jsonData, GetVehicleRatesResponse::class.java)
 
-                println(mappedResponse)
+                vehicleRates = mappedResponse.data
+
+                runOnUiThread { refreshRecyclerView() }
             }
 
             override fun onFailure(call: Call, e: IOException) {
@@ -91,4 +104,5 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
+
 }

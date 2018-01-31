@@ -7,7 +7,7 @@ package fakedomain.kerkhof.vehiclerates.model
 
 data class GetVehicleRatesResponse(
         val count: Int,
-        val data: List<VehicleRate>
+        val data: ArrayList<VehicleRate>
 )
 
 data class VehicleRate(
