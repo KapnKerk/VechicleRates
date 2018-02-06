@@ -14,11 +14,11 @@ import fakedomain.kerkhof.vehiclerates.model.VehicleRate
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
 
-    private val client = OkHttpClient()
     private val loadingIndicator: LinearLayout by lazy { findViewById<LinearLayout>(R.id.linLayProgress) }
     private val authHeader: String by lazy { Credentials.basic(Constants.AUTH_USERNAME, Constants.AUTH_PASS) }
 
@@ -54,6 +54,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun getVehicleRates() {
         loadingIndicator.visibility = View.VISIBLE
+
+        val client: OkHttpClient = OkHttpClient().newBuilder()
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
+                .build()
+
         val request = Request.Builder()
                 .url(Constants.URL_VEHICLE_RATES)
                 .header(Constants.AUTH_NAME, authHeader)
@@ -63,12 +70,16 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread { loadingIndicator.visibility = View.GONE }
 
-                val jsonData = response.body()?.string()
-                val mappedResponse: GetVehicleRatesResponse = Gson().fromJson(jsonData, GetVehicleRatesResponse::class.java)
+                 if (response.code() == 200 || response.code() == 201) {
+                     val jsonData = response.body()?.string()
+                     val mappedResponse: GetVehicleRatesResponse = Gson().fromJson(jsonData, GetVehicleRatesResponse::class.java)
 
-                vehicleRates = mappedResponse.data
+                     vehicleRates = mappedResponse.data
 
-                runOnUiThread { refreshRecyclerView() }
+                     runOnUiThread { refreshRecyclerView() }
+                 } else {
+                     // TODO: Handle failure
+                 }
             }
 
             override fun onFailure(call: Call, e: IOException) {

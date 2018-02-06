@@ -12,10 +12,9 @@ import com.google.gson.Gson
 import fakedomain.kerkhof.vehiclerates.helpers.Constants
 import fakedomain.kerkhof.vehiclerates.model.CreateVehicleRate
 import fakedomain.kerkhof.vehiclerates.model.CreateVehicleRateData
-import fakedomain.kerkhof.vehiclerates.model.CreateVehicleRateResponse
 import okhttp3.*
 import java.io.IOException
-
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -23,7 +22,6 @@ import java.io.IOException
  */
 class CreateRateActivity: AppCompatActivity() {
 
-    private val client = OkHttpClient()
     private val loadingIndicator: LinearLayout by lazy { findViewById<LinearLayout>(R.id.linLayProgress) }
     private val authHeader: String by lazy { Credentials.basic(Constants.AUTH_USERNAME, Constants.AUTH_PASS) }
 
@@ -43,22 +41,34 @@ class CreateRateActivity: AppCompatActivity() {
         rateET.requestFocus()
         waitRateET.setOnEditorActionListener { _, actionId, _ ->
             if(actionId == EditorInfo.IME_ACTION_DONE){
-                createVehicleRate()
+                validateInput()
                 true
             } else {
                 false
             }
         }
 
-        fab.setOnClickListener({ createVehicleRate() })
+        fab.setOnClickListener({ validateInput() })
 
     }
 
-    private fun createVehicleRate() {
-        loadingIndicator.visibility = View.VISIBLE
+    private fun validateInput() {
 
-        val enteredRate: Double = rateET.text.toString().toDouble()
-        val enteredWaitRate = waitRateET.text.toString().toDouble()
+        val rateText = rateET.text.toString()
+        val waitRateText = waitRateET.text.toString()
+
+        if (rateText.isEmpty() || waitRateText.isEmpty()) {
+            Toast.makeText(this, "Please enter numeric rates", Toast.LENGTH_SHORT).show()
+        } else {
+            val enteredRate = rateText.toDouble()
+            val enteredWaitRate = waitRateText.toDouble()
+
+            createVehicleRate(enteredRate, enteredWaitRate)
+        }
+    }
+
+    private fun createVehicleRate(enteredRate: Double, enteredWaitRate: Double) {
+        loadingIndicator.visibility = View.VISIBLE
 
         val rateData = CreateVehicleRateData(enteredRate, enteredWaitRate)
         val rate = CreateVehicleRate(rateData)
@@ -67,6 +77,12 @@ class CreateRateActivity: AppCompatActivity() {
 
         val plainText = MediaType.parse("text")
         val requestBody = RequestBody.create(plainText, jsonRate)
+
+        val client: OkHttpClient = OkHttpClient().newBuilder()
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
+                .build()
 
         val request = Request.Builder()
                 .url(Constants.URL_VEHICLE_RATES)
@@ -79,15 +95,12 @@ class CreateRateActivity: AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 runOnUiThread { loadingIndicator.visibility = View.GONE }
 
-                val jsonData = response.body()?.string()
-                val mappedResponse: CreateVehicleRateResponse = Gson().fromJson(jsonData, CreateVehicleRateResponse::class.java)
-
-                println(mappedResponse)
-
-                //TODO: Validate response
-
-                runOnUiThread { Toast.makeText(this@CreateRateActivity, "Rate created successfully", Toast.LENGTH_SHORT).show() }
-                finish()
+                if (response.code() == 200 || response.code() == 201) {
+                    runOnUiThread { Toast.makeText(this@CreateRateActivity, Constants.CREATE_RATE_SUCCESS_TOAST, Toast.LENGTH_SHORT).show() }
+                    finish()
+                } else {
+                    // TODO: Handle failure
+                }
             }
 
             override fun onFailure(call: Call, e: IOException) {
