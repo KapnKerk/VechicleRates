@@ -2,4 +2,6 @@
     <string name="app_name">VehicleRates</string>
     <string name="btn_post">POST Test</string>
     <string name="btn_get">GET Test</string>
+    <string name="et_rate">Vehicle Rate</string>
+    <string name="et_wait_rate">Wait Time Rate</string>
 </resources>
