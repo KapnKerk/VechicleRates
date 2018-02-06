@@ -32,7 +32,7 @@ class CreateRateActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_createrate)
 
-        supportActionBar!!.setTitle("Create Rate")
+        supportActionBar!!.title = Constants.CREATE_RATE_TITLE
 
         rateET = findViewById(R.id.rateET)
         waitRateET = findViewById(R.id.waitRateET)
@@ -58,7 +58,7 @@ class CreateRateActivity: AppCompatActivity() {
         val waitRateText = waitRateET.text.toString()
 
         if (rateText.isEmpty() || waitRateText.isEmpty()) {
-            Toast.makeText(this, "Please enter numeric rates", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, Constants.ENTER_NUMERIC_VAL, Toast.LENGTH_SHORT).show()
         } else {
             val enteredRate = rateText.toDouble()
             val enteredWaitRate = waitRateText.toDouble()

@@ -13,5 +13,7 @@ object Constants {
     const val RATE_PREFIX = "Vehicle Rate: %s"
     const val WAIT_TIME_RATE_PREFIX = "Wait Time Rate: %s"
     const val CREATE_RATE_SUCCESS_TOAST = "Rate created successfully"
+    const val ENTER_NUMERIC_VAL = "Please enter numeric rates"
+    const val CREATE_RATE_TITLE = "Create Rate"
 
 }
