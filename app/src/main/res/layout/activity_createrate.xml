@@ -10,19 +10,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:hint="@string/et_rate" />
+        android:hint="@string/et_rate"
+        android:inputType="numberDecimal"
+        android:imeOptions="actionNext" />
     <EditText
         android:id="@+id/waitRateET"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:hint="@string/et_wait_rate" />
+        android:hint="@string/et_wait_rate"
+        android:inputType="numberDecimal"
+        android:imeOptions="actionDone" />
+    <LinearLayout
+        android:id="@+id/linLayProgress"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <ProgressBar
+            android:id="@+id/pbMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        </ProgressBar>
+    </LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/createRateFAB"
+            android:id="@+id/submitRateFAB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
