@@ -1,4 +1,4 @@
-package fakedomain.kerkhof.vehiclerates
+package fakedomain.kerkhof.vehiclerates.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.Toast
 import com.google.gson.Gson
+import fakedomain.kerkhof.vehiclerates.R
+import fakedomain.kerkhof.vehiclerates.RecyclerAdapter
 import fakedomain.kerkhof.vehiclerates.helpers.Constants
 import fakedomain.kerkhof.vehiclerates.model.GetVehicleRatesResponse
 import fakedomain.kerkhof.vehiclerates.model.VehicleRate
@@ -29,6 +31,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        setupUI()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        getVehicleRates()
+    }
+
+    private fun setupUI() {
         createRateFAB.setOnClickListener {
             val intent = Intent(this, CreateRateActivity::class.java)
             startActivity(intent)
@@ -38,11 +49,6 @@ class MainActivity : AppCompatActivity() {
 
         linearLayoutManager = LinearLayoutManager(this)
         vehicleRateRV.layoutManager = linearLayoutManager
-    }
-
-    override fun onStart() {
-        super.onStart()
-        getVehicleRates()
     }
 
     private fun refreshRecyclerView() {

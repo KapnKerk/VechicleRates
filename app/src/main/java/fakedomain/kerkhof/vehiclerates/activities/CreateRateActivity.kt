@@ -1,4 +1,4 @@
-package fakedomain.kerkhof.vehiclerates
+package fakedomain.kerkhof.vehiclerates.activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import com.google.gson.Gson
+import fakedomain.kerkhof.vehiclerates.R
 import fakedomain.kerkhof.vehiclerates.helpers.Constants
 import fakedomain.kerkhof.vehiclerates.model.CreateVehicleRate
 import fakedomain.kerkhof.vehiclerates.model.CreateVehicleRateData
@@ -26,6 +27,10 @@ class CreateRateActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_createrate)
 
+        setupUI()
+    }
+
+    private fun setupUI() {
         supportActionBar!!.title = Constants.CREATE_RATE_TITLE
 
         rateET.requestFocus()

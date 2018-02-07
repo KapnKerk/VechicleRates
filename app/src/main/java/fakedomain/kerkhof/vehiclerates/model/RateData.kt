@@ -24,7 +24,3 @@ data class CreateVehicleRateData(
         val rate: Double,
         val wait_time_rate: Double
 )
-
-data class CreateVehicleRateResponse(
-        val data: VehicleRate
-)
