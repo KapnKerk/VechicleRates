@@ -4,4 +4,6 @@
     <string name="btn_get">GET Test</string>
     <string name="et_rate">Vehicle Rate</string>
     <string name="et_wait_rate">Wait Time Rate</string>
+    <string name="no_connection_pull_refresh">No internet connection, pull to refresh</string>
+    <string name="no_connection_try_again">No internet connection, please try again</string>
 </resources>

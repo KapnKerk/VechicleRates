@@ -1,17 +1,15 @@
 package fakedomain.kerkhof.vehiclerates
 
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.Toast
 import com.google.gson.Gson
 import fakedomain.kerkhof.vehiclerates.helpers.Constants
 import fakedomain.kerkhof.vehiclerates.model.CreateVehicleRate
 import fakedomain.kerkhof.vehiclerates.model.CreateVehicleRateData
+import kotlinx.android.synthetic.main.activity_createrate.*
 import okhttp3.*
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -22,21 +20,13 @@ import java.util.concurrent.TimeUnit
  */
 class CreateRateActivity: AppCompatActivity() {
 
-    private val loadingIndicator: LinearLayout by lazy { findViewById<LinearLayout>(R.id.linLayProgress) }
     private val authHeader: String by lazy { Credentials.basic(Constants.AUTH_USERNAME, Constants.AUTH_PASS) }
-
-    private lateinit var rateET: EditText
-    private lateinit var waitRateET: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_createrate)
 
         supportActionBar!!.title = Constants.CREATE_RATE_TITLE
-
-        rateET = findViewById(R.id.rateET)
-        waitRateET = findViewById(R.id.waitRateET)
-        val fab: FloatingActionButton = findViewById(R.id.submitRateFAB)
 
         rateET.requestFocus()
         waitRateET.setOnEditorActionListener { _, actionId, _ ->
@@ -48,8 +38,7 @@ class CreateRateActivity: AppCompatActivity() {
             }
         }
 
-        fab.setOnClickListener({ validateInput() })
-
+        submitRateFAB.setOnClickListener({ validateInput() })
     }
 
     private fun validateInput() {
@@ -68,7 +57,7 @@ class CreateRateActivity: AppCompatActivity() {
     }
 
     private fun createVehicleRate(enteredRate: Double, enteredWaitRate: Double) {
-        loadingIndicator.visibility = View.VISIBLE
+        createRateProgress.visibility = View.VISIBLE
 
         val rateData = CreateVehicleRateData(enteredRate, enteredWaitRate)
         val rate = CreateVehicleRate(rateData)
@@ -93,19 +82,27 @@ class CreateRateActivity: AppCompatActivity() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
-                runOnUiThread { loadingIndicator.visibility = View.GONE }
+                runOnUiThread { createRateProgress.visibility = View.GONE }
 
-                if (response.code() == 200 || response.code() == 201) {
-                    runOnUiThread { Toast.makeText(this@CreateRateActivity, Constants.CREATE_RATE_SUCCESS_TOAST, Toast.LENGTH_SHORT).show() }
-                    finish()
-                } else {
-                    // TODO: Handle failure
+                when (response.code()) {
+                    200, 201 -> {
+                        runOnUiThread { Toast.makeText(this@CreateRateActivity, Constants.CREATE_RATE_SUCCESS_TOAST, Toast.LENGTH_SHORT).show() }
+                        finish()
+                    }
+                    500 -> {
+                        runOnUiThread { Toast.makeText(this@CreateRateActivity, Constants.ERROR_500_TEXT, Toast.LENGTH_SHORT).show() }
+                    }
+                    else -> {
+                        runOnUiThread { createNoConnectionTV.visibility = View.VISIBLE }
+                    }
                 }
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                runOnUiThread { loadingIndicator.visibility = View.GONE }
-                // TODO: Handle failure
+                runOnUiThread {
+                    createRateProgress.visibility = View.GONE
+                    createNoConnectionTV.visibility = View.VISIBLE
+                }
             }
         })
     }

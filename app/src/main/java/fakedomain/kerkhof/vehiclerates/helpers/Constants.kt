@@ -15,5 +15,6 @@ object Constants {
     const val CREATE_RATE_SUCCESS_TOAST = "Rate created successfully"
     const val ENTER_NUMERIC_VAL = "Please enter numeric rates"
     const val CREATE_RATE_TITLE = "Create Rate"
+    const val ERROR_500_TEXT = "This feature is currently unavailable."
 
 }

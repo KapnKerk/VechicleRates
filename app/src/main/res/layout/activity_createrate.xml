@@ -4,11 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <TextView
+        android:id="@+id/createNoConnectionTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/alertBackground"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:textColor="@android:color/white"
+        android:text="@string/no_connection_try_again"
+        android:gravity="top|center"
+        android:visibility="gone" />
 
     <EditText
         android:id="@+id/rateET"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:padding="16dp"
         android:hint="@string/et_rate"
         android:inputType="numberDecimal"
@@ -17,12 +29,13 @@
         android:id="@+id/waitRateET"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:padding="16dp"
         android:hint="@string/et_wait_rate"
         android:inputType="numberDecimal"
         android:imeOptions="actionDone" />
     <LinearLayout
-        android:id="@+id/linLayProgress"
+        android:id="@+id/createRateProgress"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"

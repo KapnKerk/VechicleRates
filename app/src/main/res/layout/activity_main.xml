@@ -5,26 +5,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="fakedomain.kerkhof.vehiclerates.MainActivity">
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/vehicleRateRV"
+    <TextView
+        android:id="@+id/mainNoConnectionTV"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical" />
-    <LinearLayout
-        android:id="@+id/linLayProgress"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone" >
+        android:layout_height="wrap_content"
+        android:background="@color/alertBackground"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:textColor="@android:color/white"
+        android:text="@string/no_connection_pull_refresh"
+        android:gravity="top|center"
+        android:visibility="gone" />
 
-        <ProgressBar
-            android:id="@+id/pbMain"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-        </ProgressBar>
-    </LinearLayout>
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/vehicleRateRV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
+    </android.support.v4.widget.SwipeRefreshLayout>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/createRateFAB"
         android:layout_width="wrap_content"
